@@ -1,0 +1,83 @@
+[
+  {
+    "name": "evidence-grounded-research",
+    "title": "Evidence-Grounded Research",
+    "symbol": "E",
+    "ownership": "original",
+    "type": "Research methodology",
+    "status": "stable",
+    "status_label": "稳定",
+    "summary": "让每一项研究改进建议先通过论文或已完成实验的证据门槛。",
+    "solves": "凭直觉提出方法、忽略反证、把跨任务证据说成直接支持。",
+    "trigger": "方法改进、实验设计、消融优先级、科研解释与证据审计。",
+    "tags": ["evidence", "falsifiability", "research"]
+  },
+  {
+    "name": "research-collaboration-contract",
+    "title": "Research Collaboration Contract",
+    "symbol": "C",
+    "ownership": "original",
+    "type": "Collaboration protocol",
+    "status": "stable",
+    "status_label": "稳定",
+    "summary": "把继续、保持、仅限、完成、可比等自然语言约束转成可执行的研究契约。",
+    "solves": "任务在多轮协作中被悄悄扩展、重跑、换协议或过早宣称完成。",
+    "trigger": "训练、评测、续训、数据审计、长任务和综合结果报告。",
+    "tags": ["scope", "protocol", "handoff"]
+  },
+  {
+    "name": "benchmark-evidence-audit",
+    "title": "Benchmark Evidence Audit",
+    "symbol": "B",
+    "ownership": "original",
+    "type": "Evaluation guardrail",
+    "plugin": "research-evidence-guard",
+    "status": "active",
+    "status_label": "使用中",
+    "summary": "在汇报分数前核对评测协议、逐行覆盖、解析、分母和跨结果可比性。",
+    "solves": "把 smoke 当正式结果、混用生成与首 token 指标、隐藏缺行或重复行。",
+    "trigger": "评测结果汇报、benchmark 对比、模型排名和跨语言重聚合。",
+    "tags": ["benchmark", "coverage", "metrics"]
+  },
+  {
+    "name": "training-run-guard",
+    "title": "Training Run Guard",
+    "symbol": "T",
+    "ownership": "original",
+    "type": "Operations guardrail",
+    "plugin": "research-evidence-guard",
+    "status": "active",
+    "status_label": "使用中",
+    "summary": "为 GPU 训练和长评测提供启动、续训、监控与完成证据门槛。",
+    "solves": "误占 GPU、把 PID 当进度、续训变重训、DDP scheduler 步数失真。",
+    "trigger": "启动、恢复、占卡、监控或检查训练与长时间评测任务。",
+    "tags": ["gpu", "training", "completion"]
+  },
+  {
+    "name": "nature-figure",
+    "title": "Nature Figure",
+    "symbol": "N",
+    "ownership": "maintained",
+    "type": "Scientific visualization",
+    "status": "stable",
+    "status_label": "v2.0",
+    "summary": "面向 Nature 与高影响力期刊的证据驱动型论文配图工作流。",
+    "solves": "图表只追求美观，却没有明确结论、证据逻辑、导出契约和视觉 QA。",
+    "trigger": "论文作图、多面板科研绘图、SVG/PDF/TIFF 出图与审稿级检查。",
+    "tags": ["figure", "publication", "qa"]
+  },
+  {
+    "name": "ponytail",
+    "title": "Ponytail",
+    "symbol": "P",
+    "ownership": "adopted",
+    "type": "Community coding style",
+    "status": "stable",
+    "status_label": "已采用",
+    "summary": "用 YAGNI、标准库优先和最小改动约束日常编码。",
+    "solves": "过度抽象、无需求的脚手架、重复工具和缺少针对性验证。",
+    "trigger": "编写、修复、重构或审查代码。",
+    "tags": ["yagni", "stdlib", "coding"],
+    "url": "https://github.com/DietrichGebert/ponytail"
+  }
+]

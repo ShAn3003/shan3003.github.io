@@ -1,8 +1,10 @@
 ---
-title: Coming Soon……
+title: "Deep Learning Notes: Recurrent Neural Networks"
+date: "2024-12-02"
+categories: [learning, deep-learning]
+tags: [rnn, nlp, notes]
+excerpt: "从标准网络的限制出发，梳理 RNN 的结构、计算过程与经典应用。"
 ---
-
-# Deep Learning --- Andrew Ng  
 
 ## Natural Language Processing Section
 
@@ -10,9 +12,9 @@ title: Coming Soon……
 
 1. Inputs,outputs can be different lengths in different examples.
 
-2. Doesn't share features learned across different positions of text.(seem like the convolution neural network) 
+2. Doesn't share features learned across different positions of text.(seem like the convolution neural network)
 
-which means the parameter will be so great that we couldn't afford it's trainning. 
+which means the parameter will be so great that we couldn't afford it's trainning.
 
 ### Recurrent Neural Network
 
@@ -50,7 +52,7 @@ which means the parameter will be so great that we couldn't afford it's trainnin
             return output, h_t
     ```
 
-6. ![Classic RNN Architecture](./images/Classic_RNN_Description.webp)  
+6. ![Classic RNN Architecture](/images/Classic_RNN_Description.webp)
 
 7. The RNN Architecture continuoues update the weight using for match current input x_t and the weight using for remember previous content h_t-1.
 
@@ -61,7 +63,7 @@ if i want to practice my ability to build an RNN to solve a real-world problem. 
 here are the guide for your demand.
 
 1. Find a NLP dataset.
-answer: use PTB dataset(the classic dataset in NLP field.)  
+answer: use PTB dataset(the classic dataset in NLP field.)
 interesting discovery in the PTB dataset: There is an \<unk> token in this dataset which is used to protect privacy.
 
 2. Come up with a task according this dataset.
@@ -71,12 +73,12 @@ my plan is to use the first seven tokens to predict the next token.
     1. Find a proper word2vec tool.
     2. Build the correct dimension input. (batch*7*vec_dimension)
     3. Build a proper RNN and connect it with a fully connected layer.
-    4.  
+    4.
 
 ### Application
 
-![Different Application of RNN](./images/Application.png)
-The above image introduces many applications of RNN, which indicates that not only can the neural language models use rnns but languages can be described as sequences. 
+![Different Application of RNN](/images/Application.png)
+The above image introduces many applications of RNN, which indicates that not only can the neural language models use rnns but languages can be described as sequences.
 
 Here are the summary of all kinds of applications.
 
