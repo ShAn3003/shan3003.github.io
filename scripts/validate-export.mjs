@@ -1,7 +1,8 @@
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const root = new URL("../out/", import.meta.url);
+const root = fileURLToPath(new URL("../out/", import.meta.url));
 
 function filesUnder(directory) {
   return readdirSync(directory).flatMap((name) => {
@@ -12,7 +13,7 @@ function filesUnder(directory) {
 
 if (!existsSync(root)) throw new Error("Missing out/. Run npm run build first.");
 
-const htmlFiles = filesUnder(root.pathname).filter((path) => path.endsWith(".html"));
+const htmlFiles = filesUnder(root).filter((path) => path.endsWith(".html"));
 const missing = new Set();
 
 for (const htmlFile of htmlFiles) {
@@ -22,8 +23,8 @@ for (const htmlFile of htmlFiles) {
     const urlPath = decodeURIComponent(match[1]);
     const relative = urlPath.replace(/^\//, "");
     const candidates = urlPath.endsWith("/")
-      ? [join(root.pathname, relative, "index.html")]
-      : [join(root.pathname, relative), join(root.pathname, relative, "index.html")];
+      ? [join(root, relative, "index.html")]
+      : [join(root, relative), join(root, relative, "index.html")];
     if (!candidates.some(existsSync)) missing.add(`${htmlFile}: ${urlPath}`);
   }
 }

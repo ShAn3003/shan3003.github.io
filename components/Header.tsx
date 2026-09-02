@@ -4,6 +4,7 @@ const links = [
   ["/", "首页"],
   ["/skills/", "Skills"],
   ["/archive/", "文章"],
+  ["/csp-j/", "CSP-J"],
   ["/about/", "关于"],
 ] as const;
 
