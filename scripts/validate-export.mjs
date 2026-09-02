@@ -18,7 +18,9 @@ const missing = new Set();
 
 for (const htmlFile of htmlFiles) {
   const source = readFileSync(htmlFile, "utf8");
-  if (source.includes("{{") || source.includes("{%")) throw new Error(`Unrendered template syntax in ${htmlFile}`);
+  // C/C++ teaching content can legitimately contain adjacent braces (for example,
+  // a two-dimensional array initializer), so only flag template-block syntax.
+  if (source.includes("{%")) throw new Error(`Unrendered template syntax in ${htmlFile}`);
   for (const match of source.matchAll(/\b(?:href|src)="(\/[^"#?]*)(?:[?#][^"]*)?"/g)) {
     const urlPath = decodeURIComponent(match[1]);
     const relative = urlPath.replace(/^\//, "");

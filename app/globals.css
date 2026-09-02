@@ -259,18 +259,41 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 .csp-practice-actions button + button { color: var(--csp-green-dark); background: transparent; }
 .csp-practice-actions button:hover { transform: translateY(-1px); }
 .csp-practice-actions button:focus-visible { outline: 3px solid rgba(35,122,90,.3); outline-offset: 2px; }
+.csp-practice-actions button:disabled { opacity: .58; cursor: wait; transform: none; }
 .csp-practice-note { display: flex; gap: 12px; padding: 13px 24px; color: var(--muted); background: rgba(35,122,90,.065); font-size: 11px; }
 .csp-practice-note strong { flex: 0 0 auto; color: var(--ink); }
+.csp-pdf-error { margin: 0; padding: 10px 24px; color: #a72c2c; background: #fff0f0; font-size: 12px; }
+.csp-pdf-ready { margin: 0; padding: 10px 24px; color: var(--csp-green-dark); background: rgba(35,122,90,.09); font-size: 12px; }
+.csp-pdf-ready a { font-weight: 850; text-decoration: underline; }
 .csp-practice-group { padding: 20px 24px 4px; }
 .csp-practice-group + .csp-practice-group { border-top: 1px solid var(--line); }
 .csp-practice-group h3 { display: flex; justify-content: space-between; margin: 0 0 10px; font-size: 15px; }
 .csp-practice-group h3 span { color: var(--muted); font-size: 11px; font-weight: 700; }
-.csp-practice-list article { display: grid; grid-template-columns: 42px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 11px 0; border-top: 1px dashed var(--line); }
-.csp-practice-list article > b { color: var(--csp-green-dark); font-family: ui-monospace, monospace; font-size: 12px; }
-.csp-practice-list article div > strong { font-size: 13px; }
-.csp-practice-list article p { display: inline; margin: 0 0 0 8px; color: var(--muted); font-size: 12px; }
-.csp-practice-list article small { display: block; margin-top: 2px; color: var(--muted); font-size: 10px; }
-.csp-practice-list article a { padding: 5px 8px; border: 1px solid var(--line); border-radius: 8px; white-space: nowrap; font-size: 11px; font-weight: 750; }
+.csp-practice-list article { padding: 18px 0 20px; border-top: 1px dashed var(--line); }
+.csp-practice-list article header, .csp-practice-list article footer { display: flex; align-items: center; gap: 10px; }
+.csp-practice-list article header > b { color: var(--csp-green-dark); font-family: ui-monospace, monospace; font-size: 14px; }
+.csp-practice-list article header span { font-size: 12px; font-weight: 800; }
+.csp-practice-list article header small { margin-left: auto; color: var(--muted); font-size: 10px; }
+.csp-question-content { margin-top: 12px; color: var(--ink); font-size: 13px; line-height: 1.75; }
+.csp-question-content > :first-child { margin-top: 0; }
+.csp-question-content > :last-child { margin-bottom: 0; }
+.csp-question-content h2, .csp-question-content h3 { margin: 18px 0 7px; font-size: 14px; }
+.csp-question-content p { margin: 8px 0; }
+.csp-question-content pre { overflow-x: auto; padding: 14px; border-radius: 10px; color: #e8e8f2; background: #191a2d; font-size: 11px; line-height: 1.55; }
+.csp-question-content code { padding: 1px 4px; border-radius: 4px; color: var(--accent-dark); background: rgba(102,92,246,.09); }
+.csp-question-content pre code { padding: 0; color: inherit; background: none; }
+.csp-question-content img { display: block; max-width: min(100%, 780px); height: auto; margin: 14px auto; border: 1px solid var(--line); }
+.csp-question-content table { width: 100%; border-collapse: collapse; }
+.csp-question-content th, .csp-question-content td { padding: 6px 8px; border: 1px solid var(--line); }
+.csp-choice-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 28px; margin: 12px 0; padding-left: 24px; font-size: 12px; }
+.csp-choice-list li { padding-left: 3px; }
+.csp-choice-list p { margin: 0; }
+.csp-practice-list article footer { justify-content: space-between; margin-top: 14px; padding-top: 9px; border-top: 1px dotted var(--line); color: var(--muted); font-size: 10px; }
+.csp-practice-list article footer a { padding: 4px 8px; border: 1px solid var(--line); border-radius: 8px; white-space: nowrap; font-weight: 750; }
+.csp-practice.is-exporting-pdf .csp-practice-actions, .csp-practice.is-exporting-pdf .csp-practice-note, .csp-practice.is-exporting-pdf .csp-pdf-error, .csp-practice.is-exporting-pdf .csp-pdf-ready, .csp-practice.is-exporting-pdf article footer a { display: none !important; }
+.csp-practice.is-exporting-pdf .csp-pdf-block { color: #17182b !important; background: #fff !important; box-shadow: none !important; }
+.csp-practice.is-exporting-pdf .csp-pdf-block *, .csp-practice.is-exporting-pdf .katex { color: #17182b !important; }
+.csp-practice.is-exporting-pdf .csp-question-content pre, .csp-practice.is-exporting-pdf .csp-question-content pre * { color: #111 !important; background: #f2f3f6 !important; }
 
 .csp-resources { margin-top: 74px; }
 .csp-resource-heading { display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, .65fr); gap: 40px; align-items: end; margin-bottom: 22px; }
@@ -306,8 +329,9 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
   .csp-practice-actions { width: 100%; }
   .csp-practice-actions button { flex: 1; }
   .csp-practice-note { flex-direction: column; gap: 2px; }
-  .csp-practice-list article { grid-template-columns: 34px 1fr; align-items: start; }
-  .csp-practice-list article a { grid-column: 2; justify-self: start; }
+  .csp-choice-list { grid-template-columns: 1fr; }
+  .csp-practice-list article header { align-items: flex-start; flex-wrap: wrap; }
+  .csp-practice-list article header small { width: 100%; margin-left: 0; }
   .csp-resource-grid { grid-template-columns: 1fr; }
 }
 
@@ -331,7 +355,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
   .csp-practice-heading h2 { font-size: 22px; }
   .csp-practice-heading p { color: #444; }
   .csp-practice-group { padding: 10px 0 0; break-inside: avoid; }
-  .csp-practice-list article { grid-template-columns: 36px 1fr; padding: 6px 0; break-inside: avoid; }
-  .csp-practice-list article a { display: none; }
+  .csp-practice-list article { padding: 8px 0; break-inside: avoid; }
+  .csp-practice-list article footer a { display: none; }
   .csp-practice-list article p, .csp-practice-list article small { color: #444; }
 }

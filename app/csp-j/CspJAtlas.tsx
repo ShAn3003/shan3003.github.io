@@ -1,6 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import rehypeKatex from "rehype-katex";
+import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
 
 type Paper = {
   year: number;
@@ -18,8 +22,18 @@ type PracticeItem = {
   sourceQ: number;
   topic: string;
   summary: string;
+  description: string;
+  choices: string[];
   score: number;
   url: string;
+};
+
+type FullPaper = {
+  year: number;
+  id: number;
+  name: string;
+  sourceUrl: string;
+  questions: Array<{ q: number; score: number; description: string; choices: string[] }>;
 };
 
 type LearningResource = {
@@ -77,7 +91,7 @@ function shuffle<T>(values: T[], random: () => number) {
   return result;
 }
 
-function buildPractice(years: Paper[], seed: number): PracticeItem[] {
+function buildPractice(years: Paper[], fullYears: FullPaper[], seed: number): PracticeItem[] {
   const random = seededRandom(seed);
   const makeItem = (paper: Paper, sourceQ: number, newQ: number): PracticeItem => ({
     newQ,
@@ -85,6 +99,8 @@ function buildPractice(years: Paper[], seed: number): PracticeItem[] {
     sourceQ,
     topic: paper.items[sourceQ - 1][0],
     summary: paper.items[sourceQ - 1][1],
+    description: fullYears.find((fullPaper) => fullPaper.year === paper.year)!.questions[sourceQ - 1].description,
+    choices: fullYears.find((fullPaper) => fullPaper.year === paper.year)!.questions[sourceQ - 1].choices,
     score: scoreFor(paper, sourceQ),
     url: urlFor(paper),
   });
@@ -99,16 +115,94 @@ function buildPractice(years: Paper[], seed: number): PracticeItem[] {
   return [...singles, ...reading, ...completion];
 }
 
-export function CspJAtlas({ years }: { years: Paper[] }) {
+export function CspJAtlas({ years, fullYears }: { years: Paper[]; fullYears: FullPaper[] }) {
   const [yearFilter, setYearFilter] = useState("all");
   const [sectionFilter, setSectionFilter] = useState("all");
   const [selected, setSelected] = useState({ year: 2022, q: 17 });
   const [practiceSeed, setPracticeSeed] = useState(20250902);
-  const practice = useMemo(() => buildPractice(years, practiceSeed), [practiceSeed, years]);
+  const [pdfBusy, setPdfBusy] = useState(false);
+  const [pdfError, setPdfError] = useState("");
+  const [pdfDownload, setPdfDownload] = useState<{ url: string; name: string } | null>(null);
+  const practiceRef = useRef<HTMLElement>(null);
+  const practice = useMemo(() => buildPractice(years, fullYears, practiceSeed), [fullYears, practiceSeed, years]);
   const visiblePapers = useMemo(() => years.filter((paper) => yearFilter === "all" || String(paper.year) === yearFilter), [yearFilter, years]);
   const selectedPaper = years.find((paper) => paper.year === selected.year) ?? years[0];
   const selectedItem = selectedPaper.items[selected.q - 1];
   const visibleCount = visiblePapers.reduce((sum, paper) => sum + paper.items.filter((_, index) => sectionFilter === "all" || sectionFor(index + 1) === sectionFilter).length, 0);
+
+  async function downloadPdf() {
+    const root = practiceRef.current;
+    if (!root || pdfBusy) return;
+    setPdfBusy(true);
+    setPdfError("");
+    root.classList.add("is-exporting-pdf");
+    try {
+      await Promise.all([...root.querySelectorAll("img")].map((image) => image.complete ? Promise.resolve() : new Promise<void>((resolve) => {
+        image.addEventListener("load", () => resolve(), { once: true });
+        image.addEventListener("error", () => resolve(), { once: true });
+      })));
+      const [{ default: html2canvas }, { jsPDF }] = await Promise.all([import("html2canvas"), import("jspdf")]);
+      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4", compress: true });
+      const margin = 12;
+      const pageWidth = 210;
+      const pageHeight = 297;
+      const contentWidth = pageWidth - margin * 2;
+      const contentHeight = pageHeight - margin * 2;
+      let y = margin;
+      const blocks = [...root.querySelectorAll<HTMLElement>(".csp-pdf-block")];
+
+      for (const block of blocks) {
+        const canvas = await html2canvas(block, { scale: 1.65, backgroundColor: "#ffffff", useCORS: true, logging: false });
+        const fullHeightMm = canvas.height * contentWidth / canvas.width;
+        if (fullHeightMm <= contentHeight) {
+          if (y + fullHeightMm > pageHeight - margin) { pdf.addPage(); y = margin; }
+          pdf.addImage(canvas.toDataURL("image/jpeg", 0.94), "JPEG", margin, y, contentWidth, fullHeightMm, undefined, "FAST");
+          y += fullHeightMm + 3;
+          continue;
+        }
+
+        if (y > margin) { pdf.addPage(); y = margin; }
+        const sliceHeight = Math.floor(canvas.width * contentHeight / contentWidth);
+        for (let offset = 0; offset < canvas.height; offset += sliceHeight) {
+          if (offset > 0) pdf.addPage();
+          const height = Math.min(sliceHeight, canvas.height - offset);
+          const slice = document.createElement("canvas");
+          slice.width = canvas.width;
+          slice.height = height;
+          slice.getContext("2d")!.drawImage(canvas, 0, offset, canvas.width, height, 0, 0, canvas.width, height);
+          const heightMm = height * contentWidth / canvas.width;
+          pdf.addImage(slice.toDataURL("image/jpeg", 0.94), "JPEG", margin, margin, contentWidth, heightMm, undefined, "FAST");
+        }
+        y = pageHeight - margin;
+      }
+
+      const pages = pdf.getNumberOfPages();
+      for (let page = 1; page <= pages; page += 1) {
+        pdf.setPage(page);
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(8);
+        pdf.setTextColor(110);
+        pdf.text(`CSP-J Practice | ${page} / ${pages}`, pageWidth / 2, pageHeight - 5, { align: "center" });
+      }
+      const date = new Date().toISOString().slice(0, 10).replaceAll("-", "");
+      const name = `CSP-J-random-practice-${date}.pdf`;
+      const url = URL.createObjectURL(pdf.output("blob"));
+      setPdfDownload((previous) => {
+        if (previous) URL.revokeObjectURL(previous.url);
+        return { url, name };
+      });
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = name;
+      anchor.click();
+    } catch (error) {
+      console.error(error);
+      setPdfError("PDF 生成失败，请刷新页面后重试。");
+    } finally {
+      root.classList.remove("is-exporting-pdf");
+      setPdfBusy(false);
+    }
+  }
 
   return (
     <div className="csp-atlas">
@@ -132,23 +226,26 @@ export function CspJAtlas({ years }: { years: Paper[] }) {
         </div>
       </section>
 
-      <section className="csp-panel csp-practice" aria-labelledby="practice-title">
-        <div className="csp-panel-heading csp-practice-heading">
+      <section className="csp-panel csp-practice" aria-labelledby="practice-title" ref={practiceRef}>
+        <div className="csp-panel-heading csp-practice-heading csp-pdf-block">
           <div><p className="csp-kicker">课堂工具 · 100 分制</p><h2 id="practice-title">随机历年练习</h2><p>选择题覆盖全部 7 个年份；阅读程序与完善程序分别抽取一套完整题组，避免拆散上下文。</p></div>
-          <div className="csp-practice-actions"><button type="button" onClick={() => setPracticeSeed(Date.now())}>重新组卷</button><button type="button" onClick={() => window.print()}>打印练习</button></div>
+          <div className="csp-practice-actions"><button type="button" onClick={() => setPracticeSeed(Date.now())} disabled={pdfBusy}>重新组卷</button><button type="button" onClick={downloadPdf} disabled={pdfBusy}>{pdfBusy ? "正在生成 PDF…" : "下载完整 PDF"}</button></div>
         </div>
-        <div className="csp-practice-note"><strong>使用说明</strong><span>这里生成的是题目索引练习单。点击“查看原题”进入对应年份试卷作答；重新组卷后题目会变化。</span></div>
+        <div className="csp-practice-note"><strong>完整试卷</strong><span>题干、选项、程序代码与图片均来自对应年度原题。PDF 在本机浏览器内生成，不会上传练习内容。</span></div>
+        {pdfError && <p className="csp-pdf-error" role="alert">{pdfError}</p>}
+        {pdfDownload && <p className="csp-pdf-ready" role="status">PDF 已生成。若浏览器没有自动下载，<a href={pdfDownload.url} download={pdfDownload.name}>点击这里再次下载</a>。</p>}
         {[
           { title: "一、单项选择题", range: [1, 15], total: 30 },
           { title: "二、阅读程序", range: [16, 18], total: 40 },
           { title: "三、完善程序", range: [19, 20], total: 30 },
         ].map((group) => <div className="csp-practice-group" key={group.title}>
-          <h3>{group.title}<span>{group.total} 分</span></h3>
+          <h3 className="csp-pdf-block">{group.title}<span>{group.total} 分</span></h3>
           <div className="csp-practice-list">
-            {practice.filter((item) => item.newQ >= group.range[0] && item.newQ <= group.range[1]).map((item) => <article key={item.newQ}>
-              <b>Q{item.newQ}</b>
-              <div><strong>{item.topic}</strong><p>{item.summary}</p><small>来源：{item.sourceYear} 年 Q{item.sourceQ} · {item.score} 分</small></div>
-              <a href={item.url} target="_blank" rel="noreferrer">查看原题 ↗</a>
+            {practice.filter((item) => item.newQ >= group.range[0] && item.newQ <= group.range[1]).map((item) => <article className="csp-pdf-block" key={item.newQ}>
+              <header><b>Q{item.newQ}</b><span>{item.topic} · {item.score} 分</span><small>来源：{item.sourceYear} 年 Q{item.sourceQ}</small></header>
+              <div className="csp-question-content"><ReactMarkdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]}>{item.description}</ReactMarkdown></div>
+              {item.choices.length > 0 && <ol className="csp-choice-list" type="A">{item.choices.map((choice, index) => <li key={index}><ReactMarkdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]}>{choice}</ReactMarkdown></li>)}</ol>}
+              <footer><span>答案：________________</span><a href={item.url} target="_blank" rel="noreferrer">核对原题 ↗</a></footer>
             </article>)}
           </div>
         </div>)}

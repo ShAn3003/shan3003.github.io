@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import data from "@/data/cspj.json";
+import fullData from "@/data/cspj-full.json";
+import "katex/dist/katex.min.css";
 import { CspJAtlas } from "./CspJAtlas";
 
 export const metadata: Metadata = {
@@ -13,6 +15,5 @@ export const metadata: Metadata = {
 };
 
 export default function CspJPage() {
-  return <CspJAtlas years={data} />;
+  return <CspJAtlas years={data} fullYears={fullData} />;
 }
-
