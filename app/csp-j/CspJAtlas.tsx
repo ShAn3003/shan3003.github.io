@@ -211,6 +211,7 @@ export function CspJAtlas({ years, fullYears }: { years: Paper[]; fullYears: Ful
           <p className="eyebrow">2019—2025 · CSP-J 第一轮</p>
           <h1>CSP-J 历年题目与难度图谱</h1>
           <p>按年份查看每个大题的考点、题型、分值与小问数，并直接进入对应年度原题。</p>
+          <a className="csp-handbook-link" href="/csp-j/memory/">打开 CSP-J 背诵手册 <span>分类速记 ↗</span></a>
         </div>
         <div className="csp-stats" aria-label="数据概览">
           <div><strong>7</strong><span>历年试卷</span></div>
