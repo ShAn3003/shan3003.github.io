@@ -13,7 +13,6 @@ export function Header() {
     <header className="site-header">
       <div className="shell header-inner">
         <Link className="brand" href="/" aria-label="Shan Xie 首页">
-          <span>SX</span>
           <strong>Shan Xie</strong>
         </Link>
         <nav aria-label="主导航">

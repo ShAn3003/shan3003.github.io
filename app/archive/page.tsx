@@ -9,7 +9,7 @@ export default function ArchivePage() {
   const posts = getAllPosts();
   return (
     <>
-      <header className="page-hero compact"><p className="eyebrow">WRITING</p><h1>文章归档</h1><p>研究记录、工程反思与阶段性阅读笔记。</p></header>
+      <header className="page-hero compact"><h1>文章归档</h1><p>研究记录、工程反思与阶段性阅读笔记。</p></header>
       <div className="archive-list">
         {posts.map((post) => (
           <article key={post.slug}>

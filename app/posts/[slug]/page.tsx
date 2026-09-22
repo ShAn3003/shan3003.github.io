@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { formatDate } from "@/components/PostCard";
 import { getPost, getPostSlugs } from "@/lib/posts";
 
@@ -20,11 +21,12 @@ export default async function PostPage({ params }: Props) {
   return (
     <article className="post">
       <header className="post-header">
-        <p className="eyebrow">RESEARCH NOTE</p>
         <h1>{post.title}</h1>
-        <div className="post-meta"><time dateTime={post.date}>{formatDate(post.date)}</time>{post.tags.map((tag) => <span key={tag}>#{tag}</span>)}</div>
+        <p className="post-author">Shan Xie</p>
+        <p className="post-date"><time dateTime={post.date}>{formatDate(post.date)}</time></p>
       </header>
       <div className="post-content" dangerouslySetInnerHTML={{ __html: post.contentHtml }} />
+      <footer className="post-footer"><Link href="/archive/">返回文章列表</Link></footer>
     </article>
   );
 }

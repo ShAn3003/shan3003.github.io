@@ -4,11 +4,10 @@ export function SkillCard({ skill }: { skill: Skill }) {
   return (
     <article className="skill-card" id={skill.name}>
       <div className="skill-card-top">
-        <span className="skill-symbol" aria-hidden="true">{skill.symbol}</span>
-        <span className={`status status-${skill.status}`}>{skill.status_label}</span>
+        <h3>{skill.title}</h3>
+        <span className="status">{skill.status_label}</span>
       </div>
       <p className="skill-type">{skill.type}{skill.plugin && ` · ${skill.plugin}`}</p>
-      <h3>{skill.title}</h3>
       <code>${skill.name}</code>
       <p>{skill.summary}</p>
       <dl>

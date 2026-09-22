@@ -6,7 +6,7 @@ export default function AboutPage() {
   return (
     <>
       <header className="page-hero">
-        <p className="eyebrow">ABOUT</p><h1>你好，我是 Shan Xie。</h1>
+        <h1>你好，我是 Shan Xie。</h1>
         <p>我有人工智能专业背景，目前关注多语视觉语言模型、跨语言一致性、可信评测，以及让 AI agent 更可靠地参与科研工作的协作机制。</p>
       </header>
       <div className="about-grid">
