@@ -431,7 +431,11 @@ body:has(.post) > .site-footer { display: none; }
   .csp-year-links { grid-template-columns: minmax(0, 1fr); }
 }
 
+.round2-steps { padding-left: 24px; }
+.round2-steps li { margin: 16px 0; }
+.round2-steps li p { margin: 5px 0; }
+.round2-steps a { text-decoration: underline; }
 @media print {
-  .csp-round2-atlas .memory-sources { display: none !important; }
-  .csp-round2-atlas .csp-practice-group { break-inside: auto; }
+  .round2-roadmap .memory-grid article { break-inside: auto; }
+  .round2-roadmap .round2-steps li { break-inside: avoid; }
 }
