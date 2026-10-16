@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
 import { Round2Atlas } from "./Round2Atlas";
-
-export const metadata: Metadata = { title: "CSP-J 第二轮题目与算法图谱", description: "2019—2025 年 CSP-J 第二轮全国统一编程题、算法考点、易错点与训练单。" };
-
-export default function Round2Page() { return <Round2Atlas />; }
+export const metadata: Metadata = { title: "CSP-J 第二轮 T1/T2 基础刷题路线", description: "2019—2025 年 14 道第一、第二题，配套前置知识与按顺序推荐的洛谷同类练习。" };
+export default function Page() { return <Round2Atlas />; }
