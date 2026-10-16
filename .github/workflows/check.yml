@@ -15,5 +15,6 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run validate:skills
+      - run: node scripts/validate-cspj-round2.mjs
       - run: npm run build
       - run: npm run validate:export
