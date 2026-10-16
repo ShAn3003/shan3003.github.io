@@ -430,3 +430,12 @@ body:has(.post) > .site-footer { display: none; }
   .csp-intro h1, .memory-hero h1 { font-size: 30px; }
   .csp-year-links { grid-template-columns: minmax(0, 1fr); }
 }
+
+.round2-steps { padding-left: 24px; }
+.round2-steps li { margin: 16px 0; }
+.round2-steps li p { margin: 5px 0; }
+.round2-steps a { text-decoration: underline; }
+@media print {
+  .round2-roadmap .memory-grid article { break-inside: auto; }
+  .round2-roadmap .round2-steps li { break-inside: avoid; }
+}
