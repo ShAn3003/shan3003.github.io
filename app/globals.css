@@ -430,3 +430,8 @@ body:has(.post) > .site-footer { display: none; }
   .csp-intro h1, .memory-hero h1 { font-size: 30px; }
   .csp-year-links { grid-template-columns: minmax(0, 1fr); }
 }
+
+@media print {
+  .csp-round2-atlas .memory-sources { display: none !important; }
+  .csp-round2-atlas .csp-practice-group { break-inside: auto; }
+}
