@@ -1,91 +1,44 @@
 "use client";
+import { useState } from "react";
+import data from "@/data/cspj-round2.json";
 
-import { useMemo, useState } from "react";
-import questions from "@/data/cspj-round2.json";
-
+type Step = { id: string; title: string; stage: string; reason: string };
+type Problem = { year: number; q: number; id: string; title: string; topic: string; summary: string; approach: string; trap: string; prerequisites: string[]; practice: Step[] };
+const questions = data as Problem[];
 const years = [...new Set(questions.map((item) => item.year))];
-const topics = [...new Set(questions.map((item) => item.topic))];
-const stars = (n: number) => "★".repeat(n) + "☆".repeat(5 - n);
 const url = (id: string) => "https://www.luogu.com.cn/problem/" + id;
-const colors: Record<string, string> = {
-  "模拟与字符串": "csp-topic-language", "数学与位运算": "csp-topic-math",
-  "排序与数据结构": "csp-topic-data", "动态规划": "csp-topic-program",
-  "图论与搜索": "csp-topic-foundation", "贪心": "csp-topic-algorithm",
-};
-
-function makePractice(seed: number) {
-  let state = seed >>> 0;
-  const random = () => {
-    state = Math.imul(state, 1664525) + 1013904223 | 0;
-    return (state >>> 0) / 4294967296;
-  };
-  return [1, 2, 3, 4].map((q) => {
-    const pool = questions.filter((item) => item.q === q);
-    return pool[Math.floor(random() * pool.length)];
-  });
-}
 
 export function Round2Atlas() {
   const [year, setYear] = useState("all");
-  const [topic, setTopic] = useState("all");
-  const [selectedId, setSelectedId] = useState(questions[0].id);
-  const [seed, setSeed] = useState(20251016);
-  const practice = useMemo(() => makePractice(seed), [seed]);
-  const visible = questions.filter((item) => (year === "all" || String(item.year) === year) && (topic === "all" || item.topic === topic));
-  const selected = visible.find((item) => item.id === selectedId) ?? visible[0];
-  return <div className="csp-atlas csp-round2-atlas">
-    <section className="csp-intro">
-      <div><p className="eyebrow">2019—2025 · CSP-J 第二轮</p><h1>历年编程题与算法图谱</h1><p>从题意到算法、从易错点到训练：全国统一题每年 4 道，按年份与专题定位练习。</p>
-        <a className="csp-handbook-link" href="/csp-j/round-2/memory/">打开第二轮算法手册 <span>方法 · 边界 · 自测 ↗</span></a>
-        <p><a href="/csp-j/">← 第一轮题目图谱</a></p>
-      </div>
-      <div className="csp-stats" aria-label="数据概览"><div><strong>7</strong><span>历年试卷</span></div><div><strong>28</strong><span>编程题</span></div><div><strong>400</strong><span>每套总分</span></div></div>
+  const [query, setQuery] = useState("");
+  const visible = questions.filter((item) => (year === "all" || String(item.year) === year) && (item.title + item.topic + item.prerequisites.join(" ")).includes(query.trim()));
+  return <div className="memory-handbook round2-roadmap">
+    <section className="memory-hero">
+      <div><p className="eyebrow">2019—2025 · CSP-J 第二轮 · T1 / T2</p><h1>从基础练习走到历年真题</h1><p>面向基础较弱的同学，只聚焦每年第一、第二题。每道真题按前置知识与同类练习排好顺序：先做简单题，再过渡到真题，最后巩固。</p><div className="memory-hero-links"><a href="/csp-j/">← 第一轮图谱</a><a href="/csp-j/round-2/memory/">基础知识速查</a><button type="button" onClick={() => window.print()}>打印路线 / 保存 PDF</button></div></div>
     </section>
-
-    <section className="csp-panel csp-years">
-      <div className="csp-panel-heading"><div><h2>年度原题入口</h2><p>每题 100 分。五星为本站学习规划估计，反映完整解法的思维与实现负担，并非官方评级；同年各题可分别查看。</p></div></div>
-      <div className="csp-year-links">{years.map((value) => <a key={value} href={url(questions.find((item) => item.year === value)!.id)} target="_blank" rel="noreferrer"><span>{value}<small>从 T1 开始 ↗</small></span><b>4 题 · 400 分</b></a>)}</div>
+    <section className="memory-method"><h2>一条路线怎样学</h2><ol><li><strong>先看前置知识</strong><span>不熟的语法先用基础题练会，不急着做整套试卷。</span></li><li><strong>依编号逐题提交</strong><span>自己写出并通过一题，再进入下一题；卡住时只看对应知识点。</span></li><li><strong>用错例做复盘</strong><span>真题通过后，写下一句算法和一组边界样例；再做巩固题。</span></li></ol></section>
+    <section className="memory-toolbar" aria-label="筛选学习路线">
+      <label><span>搜索题目或知识</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="例如：模拟、排序、乘方" /></label>
+      <div><button type="button" className={year === "all" ? "is-active" : ""} onClick={() => setYear("all")}>全部年份</button>{years.map((item) => <button key={item} type="button" className={year === String(item) ? "is-active" : ""} onClick={() => setYear(String(item))}>{item}</button>)}</div>
+      <p>显示 {visible.length} / 14 条路线</p>
     </section>
-
-    <section className="csp-panel csp-filters" aria-label="筛选编程题">
-      <div><strong>题目索引</strong><span>{visible.length} / {questions.length} 题</span></div>
-      <label>年份<select value={year} onChange={(event) => setYear(event.target.value)}><option value="all">全部年份</option>{years.map((value) => <option key={value} value={value}>{value}</option>)}</select></label>
-      <label>算法专题<select value={topic} onChange={(event) => setTopic(event.target.value)}><option value="all">全部专题</option>{topics.map((value) => <option key={value}>{value}</option>)}</select></label>
-    </section>
-
-    <div className="csp-layout">
-      <section className="csp-question-area">
-        <div className="csp-legend">{topics.map((value) => <span key={value}><i className={colors[value]} />{value}</span>)}</div>
-        {!visible.length && <p role="status">当前组合没有题目，请切换年份或专题。</p>}
-        {years.map((value) => {
-          const items = visible.filter((item) => item.year === value);
-          if (!items.length) return null;
-          return <section className="csp-paper" key={value}>
-            <div className="csp-paper-heading"><div><h2>{value} 年</h2><p>全国统一题 · 点击题目查看算法切入点</p></div></div>
-            <div className="csp-grid" style={{ gridTemplateColumns: "repeat(2, minmax(0, 1fr))" }}>{items.map((item) => <button key={item.id} type="button" className={colors[item.topic] + (selected?.id === item.id ? " is-selected" : "")} style={{ height: "auto", minHeight: 58, padding: 10 }} aria-pressed={selected?.id === item.id} onClick={() => setSelectedId(item.id)}>T{item.q} · {item.title}<br /><small>{stars(item.difficulty)}</small></button>)}</div>
-          </section>;
-        })}
-      </section>
-      {selected && <aside className="csp-detail" aria-live="polite">
-        <div className="csp-detail-top"><span>{selected.year} · T{selected.q}</span><b aria-label={selected.difficulty + " 星"}>{stars(selected.difficulty)}</b></div>
-        <h2>{selected.title}</h2><p className="csp-meta">{selected.topic} · 100 分 · {selected.id}</p>
-        <p className="csp-summary">{selected.summary}</p>
-        <p className="csp-why"><strong>解题切入：</strong>{selected.approach}</p>
-        <p className="csp-why"><strong>实现易错：</strong>{selected.trap}</p>
-        <a className="csp-primary-link" href={url(selected.id)} target="_blank" rel="noreferrer">原题、样例与在线评测 ↗</a>
-      </aside>}
+    <div className="memory-groups">
+      {!visible.length && <p role="status">没有匹配路线，请切换年份或搜索词。</p>}
+      {years.map((value) => {
+        const items = visible.filter((item) => item.year === value);
+        if (!items.length) return null;
+        return <section className="memory-group" key={value}><header><p>{value}</p><h2>{value} 年 · 第一、第二题</h2><span>{items.length} 条路线</span></header><div className="memory-grid">{items.map((item) => <article key={item.id}>
+          <div className="memory-card-top"><span>T{item.q} · {item.topic}</span><a href={url(item.id)} target="_blank" rel="noreferrer">{item.id} 原题 ↗</a></div>
+          <h3>{item.title}</h3><p>{item.summary}</p>
+          <h4>先会这些</h4><ul>{item.prerequisites.map((point) => <li key={point}>{point}</li>)}</ul>
+          <p className="memory-mnemonic"><strong>从这里入手：</strong>{item.approach}</p>
+          <p className="memory-trap"><strong>容易错在：</strong>{item.trap}</p>
+          <h4 style={{ marginTop: 24 }}>按顺序刷题</h4>
+          <ol className="round2-steps">{item.practice.map((step) => <li key={step.id}><a href={url(step.id)} target="_blank" rel="noreferrer"><strong>{step.stage} · {step.title}</strong><small> {step.id} ↗</small></a><p>{step.reason}</p></li>)}</ol>
+          <footer>达到目标：能独立写出本题，并解释每个状态或变量的作用。</footer>
+        </article>)}</div></section>;
+      })}
     </div>
-
-    <section className="csp-panel csp-practice">
-      <div className="csp-panel-heading csp-practice-heading"><div><p className="csp-kicker">课堂工具 · 4 道编程题</p><h2>随机历年训练单</h2><p>从历年同题序各抽一题，合计 400 分；难度不保证等同某一年真卷。原题链接提供完整数据范围与样例。</p></div><div className="csp-practice-actions"><button type="button" onClick={() => setSeed(Date.now())}>重新组卷</button><button type="button" onClick={() => window.print()}>打印 / 保存 PDF</button></div></div>
-      <div className="csp-practice-group"><div className="csp-practice-list">{practice.map((item, index) => <article key={item.id}><header><b>T{index + 1}</b><span>{item.title}</span><small>{item.year} · 100 分</small></header><p>{item.summary}</p><footer><span>{item.id} · 训练目标：{item.topic}</span><a href={url(item.id)} target="_blank" rel="noreferrer">打开完整题目 ↗</a></footer></article>)}</div></div>
-      <div className="csp-practice-note"><strong>复盘顺序</strong><span>先读数据范围估算复杂度，再写朴素解校验；提交后记录错误样例，最后用算法手册回顾。打印内容为训练单摘要，完整题面请打开来源。</span></div>
-    </section>
-
-    <section className="memory-sources"><div><p className="eyebrow">Sources</p><h2>资料与整理范围</h2><p>题名、题序及题意按各题洛谷原题入口核对；算法切入与易错提醒为本站独立归纳，不能代替完整证明或题面。仅含全国统一题，不包含地方单独试卷。</p></div><ul>
-      <li><a href="https://www.noi.cn/zxzy/lnzl/" target="_blank" rel="noreferrer">CCF NOI：历年题目与数据 ↗</a></li>
-      <li><a href="https://www.noi.cn/zxzy/lnzl/jszl/2025-06-16/844463.shtml" target="_blank" rel="noreferrer">CCF：2024 年题目知识构成分析 ↗</a></li>
-      <li><a href="https://www.noi.cn/upload/resources/file/2025/11/14/CSP-JS2025入门级题目知识构成分析报告.pdf" target="_blank" rel="noreferrer">CCF：2025 年入门级知识构成分析 ↗</a></li>
-    </ul></section>
+    <section className="memory-sources"><div><p className="eyebrow">Sources</p><h2>范围与资料</h2><p>收录 2019—2025 全国统一题的 T1/T2，共 14 道。关联练习的先后顺序为本站教学建议，可按学生实际掌握程度调整。题意与要求以链接中的完整题面为准。</p></div><ul><li><a href="https://www.noi.cn/zxzy/lnzl/" target="_blank" rel="noreferrer">CCF NOI：历年题目与数据 ↗</a></li><li><a href="https://www.luogu.com.cn/problem/list" target="_blank" rel="noreferrer">洛谷：原题与同类练习入口 ↗</a></li></ul></section>
   </div>;
 }
