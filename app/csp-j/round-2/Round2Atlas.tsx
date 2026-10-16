@@ -33,7 +33,7 @@ export function Round2Atlas() {
   const practice = useMemo(() => makePractice(seed), [seed]);
   const visible = questions.filter((item) => (year === "all" || String(item.year) === year) && (topic === "all" || item.topic === topic));
   const selected = visible.find((item) => item.id === selectedId) ?? visible[0];
-  return <div className="csp-atlas">
+  return <div className="csp-atlas csp-round2-atlas">
     <section className="csp-intro">
       <div><p className="eyebrow">2019—2025 · CSP-J 第二轮</p><h1>历年编程题与算法图谱</h1><p>从题意到算法、从易错点到训练：全国统一题每年 4 道，按年份与专题定位练习。</p>
         <a className="csp-handbook-link" href="/csp-j/round-2/memory/">打开第二轮算法手册 <span>方法 · 边界 · 自测 ↗</span></a>
@@ -78,8 +78,8 @@ export function Round2Atlas() {
 
     <section className="csp-panel csp-practice">
       <div className="csp-panel-heading csp-practice-heading"><div><p className="csp-kicker">课堂工具 · 4 道编程题</p><h2>随机历年训练单</h2><p>从历年同题序各抽一题，合计 400 分；难度不保证等同某一年真卷。原题链接提供完整数据范围与样例。</p></div><div className="csp-practice-actions"><button type="button" onClick={() => setSeed(Date.now())}>重新组卷</button><button type="button" onClick={() => window.print()}>打印 / 保存 PDF</button></div></div>
-      <div className="csp-practice-group"><div className="csp-practice-list">{practice.map((item, index) => <article key={item.id}><header><b>T{index + 1}</b><span>{item.title}</span><small>{item.year} · 100 分</small></header><p>{item.summary}</p><footer><span>训练目标：{item.topic}</span><a href={url(item.id)} target="_blank" rel="noreferrer">打开完整题目 ↗</a></footer></article>)}</div></div>
-      <div className="csp-practice-note"><strong>复盘顺序</strong><span>先读数据范围估算复杂度，再写朴素解校验；提交后记录错误样例，最后用算法手册回顾。打印内容为训练单与索引摘要，完整题面请打开来源。</span></div>
+      <div className="csp-practice-group"><div className="csp-practice-list">{practice.map((item, index) => <article key={item.id}><header><b>T{index + 1}</b><span>{item.title}</span><small>{item.year} · 100 分</small></header><p>{item.summary}</p><footer><span>{item.id} · 训练目标：{item.topic}</span><a href={url(item.id)} target="_blank" rel="noreferrer">打开完整题目 ↗</a></footer></article>)}</div></div>
+      <div className="csp-practice-note"><strong>复盘顺序</strong><span>先读数据范围估算复杂度，再写朴素解校验；提交后记录错误样例，最后用算法手册回顾。打印内容为训练单摘要，完整题面请打开来源。</span></div>
     </section>
 
     <section className="memory-sources"><div><p className="eyebrow">Sources</p><h2>资料与整理范围</h2><p>题名、题序及题意按各题洛谷原题入口核对；算法切入与易错提醒为本站独立归纳，不能代替完整证明或题面。仅含全国统一题，不包含地方单独试卷。</p></div><ul>
