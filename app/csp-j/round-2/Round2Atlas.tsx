@@ -14,7 +14,7 @@ export function Round2Atlas() {
   const visible = questions.filter((item) => (year === "all" || String(item.year) === year) && (item.title + item.topic + item.prerequisites.join(" ")).includes(query.trim()));
   return <div className="memory-handbook round2-roadmap">
     <section className="memory-hero">
-      <div><p className="eyebrow">2019—2025 · CSP-J 第二轮 · T1 / T2</p><h1>从基础练习走到历年真题</h1><p>面向基础较弱的同学，只聚焦每年第一、第二题。每道真题按前置知识与同类练习排好顺序：先做简单题，再过渡到真题，最后巩固。</p><div className="memory-hero-links"><a href="/csp-j/">← 第一轮图谱</a><a href="/csp-j/round-2/memory/">基础知识速查</a><button type="button" onClick={() => window.print()}>打印路线 / 保存 PDF</button></div></div>
+      <div><p className="eyebrow">2019—2025 · CSP-J 第二轮 · T1 / T2</p><h1>从基础练习走到历年真题</h1><p>面向基础较弱的同学，只聚焦每年第一、第二题。建议先完成各年 T1，再进入 T2；部分 T2 需要较多过渡练习。每条路线按技能拆解，关联题不一定与真题完全同型。</p><div className="memory-hero-links"><a href="/csp-j/">← 第一轮图谱</a><a href="/csp-j/round-2/memory/">基础知识速查</a><button type="button" onClick={() => window.print()}>打印路线 / 保存 PDF</button></div></div>
     </section>
     <section className="memory-method"><h2>一条路线怎样学</h2><ol><li><strong>先看前置知识</strong><span>不熟的语法先用基础题练会，不急着做整套试卷。</span></li><li><strong>依编号逐题提交</strong><span>自己写出并通过一题，再进入下一题；卡住时只看对应知识点。</span></li><li><strong>用错例做复盘</strong><span>真题通过后，写下一句算法和一组边界样例；再做巩固题。</span></li></ol></section>
     <section className="memory-toolbar" aria-label="筛选学习路线">
@@ -34,7 +34,7 @@ export function Round2Atlas() {
           <p className="memory-mnemonic"><strong>从这里入手：</strong>{item.approach}</p>
           <p className="memory-trap"><strong>容易错在：</strong>{item.trap}</p>
           <h4 style={{ marginTop: 24 }}>按顺序刷题</h4>
-          <ol className="round2-steps">{item.practice.map((step) => <li key={step.id}><a href={url(step.id)} target="_blank" rel="noreferrer"><strong>{step.stage} · {step.title}</strong><small> {step.id} ↗</small></a><p>{step.reason}</p></li>)}</ol>
+          <ol className="round2-steps">{item.practice.map((step) => <li key={step.id}><a href={url(step.id)} target="_blank" rel="noreferrer"><strong>{step.stage.startsWith("可选") ? "选做" : "必做"} · {step.stage} · {step.title}</strong><small> {step.id} ↗</small></a><p>{step.reason}</p></li>)}</ol>
           <footer>达到目标：能独立写出本题，并解释每个状态或变量的作用。</footer>
         </article>)}</div></section>;
       })}
