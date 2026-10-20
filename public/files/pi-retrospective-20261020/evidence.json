@@ -1,0 +1,140 @@
+{
+  "scope": "当前保留的本地 PI 会话；含历史分支；不是所有设备或已删除会话",
+  "snapshot_time_asia_shanghai": "2026-10-20T13:02:31.377990+08:00",
+  "date_range_asia_shanghai": [
+    "2026-10-09",
+    "2026-10-20"
+  ],
+  "session_files": 35,
+  "raw_cases": 406,
+  "unique_cases": 402,
+  "copied_records": 4,
+  "sessions_with_cases": 32,
+  "invalid_lines": 5,
+  "unique_by_role": {
+    "assistant": 149,
+    "toolResult": 253
+  },
+  "categories": {
+    "工具：其他非零退出（待判读）": 113,
+    "请求：无可用账户": 66,
+    "工具：程序或测试异常": 35,
+    "中止：原因未确认": 25,
+    "请求：连接错误": 21,
+    "工具：编辑原文未找到": 18,
+    "工具：路径缺失": 15,
+    "工具：权限不足": 13,
+    "工具：命令缺失": 12,
+    "请求：账户池耗尽": 12,
+    "工具：中止（原因未确认）": 10,
+    "请求：空流": 8,
+    "工具：Git上下文错误": 8,
+    "工具：语法错误": 6,
+    "工具：SQL错误": 5,
+    "工具：读取偏移越界": 4,
+    "请求：上游502": 4,
+    "工具：超时": 4,
+    "请求：超时": 4,
+    "请求：上游404": 4,
+    "工具：上游请求失败": 3,
+    "工具：编辑空匹配文本": 3,
+    "请求：工具调用格式异常": 3,
+    "工具：编辑匹配不唯一": 3,
+    "工具：模型选择歧义": 1,
+    "请求：流读取异常": 1,
+    "请求：并发限制": 1
+  },
+  "groups": {
+    "请求错误": 124,
+    "工具失败（不含中止）": 243,
+    "中止": 35
+  },
+  "method": [
+    "消息为计数单位；独立重试分别计数",
+    "复制去重要求消息ID、时间、角色、完整消息内容一致",
+    "工具细类为关键词初分，不等于根因",
+    "5行不可解析记录未进入已确认错误数",
+    "崩溃与独立重放单列，不加入402条",
+    "无完整原始会话、命令或凭据；私有来源映射留在本地"
+  ],
+  "examples": [
+    {
+      "case_id": "E0001",
+      "category": "请求：无可用账户",
+      "time_asia_shanghai": "2026-10-12T23:16:12.332000+08:00",
+      "excerpt": "503: {\"message\":\"No available accounts: no available accounts\",\"type\":\"api_error\"}",
+      "redaction": "原始错误的连续摘录"
+    },
+    {
+      "case_id": "E0010",
+      "category": "请求：空流",
+      "time_asia_shanghai": "2026-10-13T10:52:27.138000+08:00",
+      "excerpt": "empty_stream",
+      "redaction": "原始错误的连续摘录"
+    },
+    {
+      "case_id": "E0223",
+      "category": "请求：工具调用格式异常",
+      "time_asia_shanghai": "2026-10-19T18:33:30.930000+08:00",
+      "excerpt": "malformed_function_call",
+      "redaction": "原始错误的连续摘录"
+    },
+    {
+      "case_id": "E0023",
+      "category": "工具：编辑原文未找到",
+      "time_asia_shanghai": "2026-10-13T00:41:22.321000+08:00",
+      "excerpt": "Could not find edits[1] in <project>/DEPLOYMENT_LOCAL.md. The oldText must match exactly including all whitespace and newlines.",
+      "redaction": "仅路径替换为 <project>"
+    },
+    {
+      "case_id": "E0337",
+      "category": "工具：编辑匹配不唯一",
+      "time_asia_shanghai": "2026-10-12T12:07:03.230000+08:00",
+      "excerpt": "Found 35 occurrences of the text in <project>/docs/rag_interface_spec.html. The text must be unique. Please provide more context to make it unique.",
+      "redaction": "仅路径替换为 <project>"
+    },
+    {
+      "case_id": "E0145",
+      "category": "工具：编辑空匹配文本",
+      "time_asia_shanghai": "2026-10-16T20:49:35.081000+08:00",
+      "excerpt": "oldText must not be empty in <project>/src/extension.ts.",
+      "redaction": "仅路径替换为 <project>"
+    },
+    {
+      "case_id": "E0035",
+      "category": "工具：读取偏移越界",
+      "time_asia_shanghai": "2026-10-13T18:55:43.371000+08:00",
+      "excerpt": "Offset 730 is beyond end of file (216 lines total)",
+      "redaction": "原始错误的连续摘录"
+    },
+    {
+      "case_id": "E0030",
+      "category": "工具：模型选择歧义",
+      "time_asia_shanghai": "2026-10-13T16:23:42.955000+08:00",
+      "excerpt": "Error: Model \"claude-sonnet-4-5\" is ambiguous across providers:",
+      "redaction": "原始错误的连续摘录"
+    },
+    {
+      "case_id": "CRASH-01",
+      "category": "未捕获的子进程启动异常",
+      "time_asia_shanghai": "2026-10-13T16:33:48.266000+08:00",
+      "excerpt": "spawn xdg-open ENOENT",
+      "redaction": "原始异常的连续摘录；堆栈、路径及会话标识未公开"
+    },
+    {
+      "case_id": "REPLAY-01",
+      "category": "HTTP 200 中的 SSE 失败",
+      "http_status": 200,
+      "elapsed_seconds": 100.226,
+      "message_count": 103,
+      "text_characters": 0,
+      "tool_calls": 0,
+      "errors": [
+        "empty_stream"
+      ],
+      "tools_executed": false,
+      "status": "fail",
+      "note": "独立诊断重放，不属于 402 条会话消息的新增计数；未执行返回的工具"
+    }
+  ]
+}
